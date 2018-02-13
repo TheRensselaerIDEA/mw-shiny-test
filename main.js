@@ -1,29 +1,68 @@
-const electron = require('electron')
+const electron = require('electron');
 // Module to control application life.
-const app = electron.app
+const app = electron.app;
+
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
+const BrowserWindow = electron.BrowserWindow;
 
-const path = require('path')
-const url = require('url')
+const path = require('path');
+const url = require('url');
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+var {app2, BrowserWindow2, ipcMain} = electron;
+var floorWindow = null;
+var mainWindow = null;
 
 function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+  var screenElectron = electron.screen;
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  var mainScreen = screenElectron.getPrimaryDisplay();
+  var allScreens = screenElectron.getAllDisplays();
+  var wallScreen = null;
+  var floorScreen = null;
+
+  // Wider screen should be the "Wall"
+  if (allScreens[0].size.width > allScreens[1].size.width){
+    wallScreen = allScreens[0];
+    floorScreen = allScreens[1];
+  } else {
+    floorScreen = allScreens[0];
+    wallScreen = allScreens[1];
+  }
+
+  console.log(mainScreen, allScreens);
+
+  // Create a browser window for the "Wall"...
+  // "Wall" should fill available screen
+  mainWindow = new BrowserWindow({x: 0, y: 0, 
+                                  width: wallScreen.size.width, height: wallScreen.size.height, 
+                                  show: false,
+                                  webPreferences:{nodeIntegration: false}})
+
+  // Now load the wall URL
+  mainWindow.loadURL('https://lp01.idea.rpi.edu/shiny/erickj4/swotr/?view=Wall')
+
+  // Report the available dimensions to console 
+  console.log(floorScreen.size.height);
+  console.log(floorScreen.size.width);
+
+  console.log(wallScreen.size.height);
+  console.log(wallScreen.size.width);
+
+  // Create a browser window for the "Floor"...
+  // Floor on Campfire must be centered (x position)
+  //floorWindow = new BrowserWindow({ frame:false, x:((1920-1080)/2)-1920, y:0, width:1080, height:800}, webPreferences:{nodeIntegration: false} )
+  // "Floor" for debug should fill available screen
+  floorWindow = new BrowserWindow({x:floorScreen.size.width, y:0, 
+                                   width:floorScreen.size.width, height:floorScreen.size.height, 
+                                   show: false,
+                                   webPreferences:{nodeIntegration: false}})
+
+  // Now load the floor URL
+  floorWindow.loadURL('https://lp01.idea.rpi.edu/shiny/erickj4/swotr/?view=Floor')
+
+  floorWindow.setFullScreen(true);
+  mainWindow.setFullScreen(true);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -31,6 +70,7 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
+    floorWindow = null
   })
 }
 
@@ -41,11 +81,7 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
     app.quit()
-  }
 })
 
 app.on('activate', function () {

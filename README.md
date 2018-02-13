@@ -1,6 +1,6 @@
-# electron-quick-start
+# mw-shiny-test
 
-**Clone and run for a quick way to see Electron in action.**
+**Simple Multi-window Shiny Test App using Electron**
 
 This is a minimal Electron application based on the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start) within the Electron documentation.
 
@@ -16,13 +16,18 @@ You can learn more about each of these components within the [Quick Start Guide]
 
 ## To Use
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+To clone and run this repository you'll need:
+
+    * [Git](https://git-scm.com) 
+    * [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. 
+
+From your command line:
 
 ```bash
 # Clone this repository
-git clone https://github.com/electron/electron-quick-start
+git clone https://github.com/TheRensselaerIDEA/mw-shiny-test
 # Go into the repository
-cd electron-quick-start
+cd mw-shiny-test
 # Install dependencies
 npm install
 # Run the app
